@@ -16,7 +16,7 @@ export default function Home() {
     setLoading(true);
 
     try {
-      const res = await fetch("https://ai-skincare-backend-1.onrender.com", {
+      const res = await fetch("https://ai-skincare-backend-1.onrender.com/recommend", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
