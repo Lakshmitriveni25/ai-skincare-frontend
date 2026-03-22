@@ -7,20 +7,20 @@ export default function Home() {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  const API_URL = "https://ai-skincare-backend-1.onrender.com/recommend";
+
   const handleSubmit = async () => {
     if (!skinType || !concern) {
-      alert("Please select both options");
+      alert("Please select options");
       return;
     }
 
     setLoading(true);
 
     try {
-      const res = await fetch("https://ai-skincare-backend-1.onrender.com/recommend", {
+      const res = await fetch(API_URL, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           skin_type: skinType,
           concern: concern,
@@ -30,130 +30,125 @@ export default function Home() {
 
       const data = await res.json();
 
-      // ✅ SUPER SAFE HANDLING
-      if (data && typeof data === "object" && data.recommendation) {
+      if (data?.recommendation) {
         setResult(data.recommendation);
       } else {
         setResult(null);
       }
-
-    } catch (error) {
-      console.error("API ERROR:", error);
-      setResult(null);
+    } catch (err) {
+      console.error(err);
+      alert("Error fetching data");
     }
 
     setLoading(false);
   };
 
-  // ✅ SAFE PRODUCT LINKS
   const getProductLink = (type) => {
-    const key = `${skinType}_${concern}`;
-
-    const products = {
-      cleanser: {
-        oily_acne: "https://www.amazon.com/dp/B00U1YCRD8",
-        dry_acne: "https://www.amazon.com/dp/B01MSSDEPK",
-        dry_pigmentation: "https://www.amazon.com/dp/B01N1LL62W",
-        oily_pigmentation: "https://www.amazon.com/dp/B00U1YCRD8",
-      },
-      moisturizer: {
-        oily_acne: "https://www.amazon.com/dp/B00365DABC",
-        dry_acne: "https://www.amazon.com/dp/B07RK4HST7",
-        dry_pigmentation: "https://www.amazon.com/dp/B07RTTP3W5",
-        oily_pigmentation: "https://www.amazon.com/dp/B00365DABC",
-      },
-      sunscreen: {
-        oily_acne: "https://www.amazon.com/dp/B00HNSSV3U",
-        dry_acne: "https://www.amazon.com/dp/B01M4MCUAF",
-        dry_pigmentation: "https://www.amazon.com/dp/B07YZQTKDJ",
-        oily_pigmentation: "https://www.amazon.com/dp/B00HNSSV3U",
-      },
+    const links = {
+      cleanser:
+        "https://www.amazon.com/s?k=salicylic+acid+cleanser",
+      moisturizer:
+        "https://www.amazon.com/s?k=ceramide+moisturizer",
+      sunscreen:
+        "https://www.amazon.com/s?k=spf+50+sunscreen",
     };
 
-    return products[type]?.[key] || "https://www.amazon.com";
+    return links[type] || "https://www.amazon.com";
   };
 
   return (
-    <div style={mainContainer}>
-      <div style={cardBox}>
-        <h1>✨ AI Skincare</h1>
+    <div style={container}>
+      <div style={card}>
+        <h2 style={{ marginBottom: 20 }}>✨ AI Skincare</h2>
 
-        <select value={skinType} onChange={(e) => setSkinType(e.target.value)} style={inputStyle}>
+        <select
+          value={skinType}
+          onChange={(e) => setSkinType(e.target.value)}
+          style={input}
+        >
           <option value="">Select Skin Type</option>
           <option value="oily">Oily</option>
           <option value="dry">Dry</option>
         </select>
 
-        <select value={concern} onChange={(e) => setConcern(e.target.value)} style={inputStyle}>
+        <select
+          value={concern}
+          onChange={(e) => setConcern(e.target.value)}
+          style={input}
+        >
           <option value="">Select Concern</option>
           <option value="acne">Acne</option>
           <option value="pigmentation">Pigmentation</option>
         </select>
 
-        <button onClick={handleSubmit} style={buttonStyle}>
+        <button onClick={handleSubmit} style={button}>
           {loading ? "Loading..." : "Get Recommendation"}
         </button>
 
-        {/* ✅ SAFE RENDER BLOCK */}
-        {result &&
-          result.Cleanser &&
-          result.Moisturizer &&
-          result.Sunscreen && (
-            <div style={{ marginTop: "25px" }}>
-              <h3>🧴 Your Routine</h3>
+        {/* RESULT */}
+        {result && typeof result === "object" && (
+          <div style={{ marginTop: 30 }}>
+            <h3>🧴 Your Routine</h3>
 
-              <div style={cardContainer}>
-                {["Cleanser", "Moisturizer", "Sunscreen"].map((item) => {
-                  const value = result?.[item] || "N/A";
+            <div style={grid}>
+              {["Cleanser", "Moisturizer", "Sunscreen"].map((item) => {
+                let value = result[item];
 
-                  return (
-                    <div key={item} style={cardStyle}>
-                      <img
-                        src={`https://source.unsplash.com/200x200/?skincare,${item}`}
-                        style={imageStyle}
-                        alt={item}
-                      />
+                if (!value) value = "N/A";
+                if (typeof value !== "string") {
+                  value = JSON.stringify(value);
+                }
 
-                      <h4>{item}</h4>
-                      <p>{value}</p>
+                return (
+                  <div key={item} style={productCard}>
+                    <img
+                      src={`https://source.unsplash.com/300x300/?skincare,${item}`}
+                      style={image}
+                    />
 
-                      <a
-                        href={getProductLink(item.toLowerCase())}
-                        target="_blank"
-                        style={buyButton}
-                      >
-                        Buy
-                      </a>
-                    </div>
-                  );
-                })}
-              </div>
+                    <h4>{item}</h4>
+                    <p>{value}</p>
+
+                    <a
+                      href={getProductLink(item.toLowerCase())}
+                      target="_blank"
+                      style={buyButton}
+                    >
+                      Buy Now
+                    </a>
+                  </div>
+                );
+              })}
             </div>
-          )}
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
+//
 // 🎨 STYLES
-const mainContainer = {
+//
+
+const container = {
   minHeight: "100vh",
-  background: "linear-gradient(135deg, #ff9a9e, #a18cd1)",
+  background: "linear-gradient(135deg,#ff9a9e,#a18cd1)",
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
 };
 
-const cardBox = {
+const card = {
   background: "white",
   padding: "40px",
   borderRadius: "20px",
-  boxShadow: "0 15px 40px rgba(0,0,0,0.2)",
   width: "420px",
   textAlign: "center",
+  boxShadow: "0 20px 40px rgba(0,0,0,0.2)",
 };
 
-const inputStyle = {
+const input = {
   width: "100%",
   padding: "12px",
   marginBottom: "15px",
@@ -161,43 +156,48 @@ const inputStyle = {
   border: "1px solid #ccc",
 };
 
-const buttonStyle = {
+const button = {
   width: "100%",
   padding: "14px",
-  background: "linear-gradient(to right, #ff7e5f, #ff3f8e)",
+  background: "#ff7e5f",
   color: "white",
   border: "none",
   borderRadius: "10px",
+  cursor: "pointer",
   fontWeight: "bold",
 };
 
-const cardContainer = {
+const grid = {
   display: "flex",
-  justifyContent: "space-between",
-  marginTop: "15px",
+  gap: "15px",
+  flexWrap: "wrap",
+  justifyContent: "center",
 };
 
-const cardStyle = {
-  width: "120px",
-  padding: "10px",
+const productCard = {
   background: "#fff",
-  borderRadius: "12px",
-  boxShadow: "0 5px 15px rgba(0,0,0,0.1)",
+  padding: "15px",
+  borderRadius: "15px",
+  width: "140px",
+  textAlign: "center",
+  boxShadow: "0 10px 20px rgba(0,0,0,0.1)",
+  transition: "0.3s",
 };
 
-const imageStyle = {
+const image = {
   width: "100%",
-  height: "100px",
+  height: "120px",
   objectFit: "cover",
   borderRadius: "10px",
 };
 
 const buyButton = {
-  display: "block",
-  marginTop: "8px",
-  padding: "6px",
-  background: "#ff7e5f",
+  display: "inline-block",
+  marginTop: "10px",
+  padding: "8px 12px",
+  background: "#6c63ff",
   color: "white",
   borderRadius: "8px",
   textDecoration: "none",
+  fontSize: "12px",
 };
