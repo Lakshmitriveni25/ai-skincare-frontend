@@ -107,127 +107,84 @@ export default function Home() {
             fontWeight: "bold",
           }}
         >
-          {loading ? "Loading..." : "Get Recommendation"}
+          {loading ? "Getting Recommendation..." : "Get Recommendation"}
         </button>
 
-        {result && (
-          <div style={{ marginTop: "25px", width: "100%" }}>
-            <h3 style={{ marginBottom: "15px", color: "#333" }}>
-              🧴 Your Routine
-            </h3>
+        {loading && (
+          <p style={{ marginTop: "10px", fontSize: "14px" }}>
+            ⏳ Loading...
+          </p>
+        )}
 
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: "12px",
-                justifyContent: "center",
-              }}
-            >
+        {result && (
+          <div style={{ marginTop: "25px" }}>
+            <h3>🧴 Your Routine</h3>
+
+            <div style={{ display: "flex", gap: "12px", justifyContent: "center" }}>
+
               {/* Cleanser */}
-              <div
-                style={{
-                  background: "white",
-                  padding: "10px",
-                  borderRadius: "12px",
-                  width: "100%",
-                  maxWidth: "120px",
-                  textAlign: "center",
-                  boxShadow: "0 5px 15px rgba(0,0,0,0.1)",
-                  transition: "transform 0.2s",
-                }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.transform = "scale(1.05)")
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.transform = "scale(1)")
-                }
-              >
+              <div style={{
+                background: "white",
+                padding: "10px",
+                borderRadius: "12px",
+                width: "110px",
+                textAlign: "center",
+                boxShadow: "0 5px 15px rgba(0,0,0,0.1)"
+              }}>
                 <img
-                  src="https://images.unsplash.com/photo-1585386959984-a4155224a1ad"
-                  alt="cleanser"
-                  style={{
-                    width: "100%",
-                    height: "100px",
-                    objectFit: "cover",
-                    borderRadius: "8px",
-                  }}
+                  src={result?.Cleanser?.image}
+                  style={{ width: "100%", height: "90px", borderRadius: "8px" }}
                 />
                 <p style={{ fontSize: "12px" }}>
-                  <strong>🧼 Cleanser</strong><br />
-                  {result.Cleanser}
+                  🧼 {result?.Cleanser?.name}
                 </p>
+                <a href={result?.Cleanser?.link} target="_blank">
+                  <button style={{ fontSize: "10px" }}>Buy</button>
+                </a>
               </div>
 
               {/* Moisturizer */}
-              <div
-                style={{
-                  background: "white",
-                  padding: "10px",
-                  borderRadius: "12px",
-                  width: "100%",
-                  maxWidth: "120px",
-                  textAlign: "center",
-                  boxShadow: "0 5px 15px rgba(0,0,0,0.1)",
-                  transition: "transform 0.2s",
-                }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.transform = "scale(1.05)")
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.transform = "scale(1)")
-                }
-              >
+              <div style={{
+                background: "white",
+                padding: "10px",
+                borderRadius: "12px",
+                width: "110px",
+                textAlign: "center",
+                boxShadow: "0 5px 15px rgba(0,0,0,0.1)"
+              }}>
                 <img
-                  src="https://images.unsplash.com/photo-1611930022073-b7a4ba5fcccd"
-                  alt="moisturizer"
-                  style={{
-                    width: "100%",
-                    height: "100px",
-                    objectFit: "cover",
-                    borderRadius: "8px",
-                  }}
+                  src={result?.Moisturizer?.image}
+                  style={{ width: "100%", height: "90px", borderRadius: "8px" }}
                 />
                 <p style={{ fontSize: "12px" }}>
-                  <strong>💧 Moisturizer</strong><br />
-                  {result.Moisturizer}
+                  💧 {result?.Moisturizer?.name}
                 </p>
+                <a href={result?.Moisturizer?.link} target="_blank">
+                  <button style={{ fontSize: "10px" }}>Buy</button>
+                </a>
               </div>
 
               {/* Sunscreen */}
-              <div
-                style={{
-                  background: "white",
-                  padding: "10px",
-                  borderRadius: "12px",
-                  width: "100%",
-                  maxWidth: "120px",
-                  textAlign: "center",
-                  boxShadow: "0 5px 15px rgba(0,0,0,0.1)",
-                  transition: "transform 0.2s",
-                }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.transform = "scale(1.05)")
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.transform = "scale(1)")
-                }
-              >
+              <div style={{
+                background: "white",
+                padding: "10px",
+                borderRadius: "12px",
+                width: "110px",
+                textAlign: "center",
+                boxShadow: "0 5px 15px rgba(0,0,0,0.1)"
+              }}>
                 <img
-                  src="https://images.unsplash.com/photo-1596755389378-c31d21fd1273"
-                  alt="sunscreen"
-                  style={{
-                    width: "100%",
-                    height: "100px",
-                    objectFit: "cover",
-                    borderRadius: "8px",
-                  }}
+                  src={result?.Sunscreen?.image}
+                  style={{ width: "100%", height: "90px", borderRadius: "8px" }}
                 />
                 <p style={{ fontSize: "12px" }}>
-                  <strong>🌞 Sunscreen</strong><br />
-                  {result.Sunscreen}
+                  🌞 {result?.Sunscreen?.name}
                 </p>
+                <a href={result?.Sunscreen?.link} target="_blank">
+                  <button style={{ fontSize: "10px" }}>Buy</button>
+                </a>
               </div>
+
             </div>
           </div>
         )}
