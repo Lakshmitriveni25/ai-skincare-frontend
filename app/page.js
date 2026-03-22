@@ -30,23 +30,22 @@ export default function Home() {
 
       const data = await res.json();
 
-      // ✅ SAFE CHECK (NO CRASH)
-      if (data && data.recommendation) {
+      // ✅ SUPER SAFE HANDLING
+      if (data && typeof data === "object" && data.recommendation) {
         setResult(data.recommendation);
       } else {
         setResult(null);
-        alert("Invalid response from server");
       }
 
     } catch (error) {
-      console.error(error);
-      alert("Error fetching data");
+      console.error("API ERROR:", error);
+      setResult(null);
     }
 
     setLoading(false);
   };
 
-  // ✅ PRODUCT LINKS FIXED
+  // ✅ SAFE PRODUCT LINKS
   const getProductLink = (type) => {
     const key = `${skinType}_${concern}`;
 
@@ -77,7 +76,7 @@ export default function Home() {
   return (
     <div style={mainContainer}>
       <div style={cardBox}>
-        <h1 style={{ marginBottom: "25px" }}>✨ AI Skincare</h1>
+        <h1>✨ AI Skincare</h1>
 
         <select value={skinType} onChange={(e) => setSkinType(e.target.value)} style={inputStyle}>
           <option value="">Select Skin Type</option>
@@ -95,45 +94,42 @@ export default function Home() {
           {loading ? "Loading..." : "Get Recommendation"}
         </button>
 
-        {/* ✅ SAFE RENDER */}
-        {result && result.Cleanser && result.Moisturizer && result.Sunscreen && (
-          <div style={{ marginTop: "30px" }}>
-            <h3>🧴 Your Routine</h3>
+        {/* ✅ SAFE RENDER BLOCK */}
+        {result &&
+          result.Cleanser &&
+          result.Moisturizer &&
+          result.Sunscreen && (
+            <div style={{ marginTop: "25px" }}>
+              <h3>🧴 Your Routine</h3>
 
-            <div style={cardContainer}>
-              {["Cleanser", "Moisturizer", "Sunscreen"].map((item) => (
-                <div
-                  key={item}
-                  style={cardStyle}
-                  onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.08)"}
-                  onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
-                >
-                  <img
-                    src={`https://source.unsplash.com/200x200/?skincare,${item}`}
-                    style={imageStyle}
-                  />
+              <div style={cardContainer}>
+                {["Cleanser", "Moisturizer", "Sunscreen"].map((item) => {
+                  const value = result?.[item] || "N/A";
 
-                  <h4>{item}</h4>
+                  return (
+                    <div key={item} style={cardStyle}>
+                      <img
+                        src={`https://source.unsplash.com/200x200/?skincare,${item}`}
+                        style={imageStyle}
+                        alt={item}
+                      />
 
-                  {/* ✅ SAFE TEXT */}
-                  <p style={{ fontSize: "13px" }}>
-                    {result?.[item] || "Loading..."}
-                  </p>
+                      <h4>{item}</h4>
+                      <p>{value}</p>
 
-                  <a
-                    href={getProductLink(item.toLowerCase())}
-                    target="_blank"
-                    style={buyButton}
-                    onMouseEnter={(e) => e.target.style.background = "#ff3f8e"}
-                    onMouseLeave={(e) => e.target.style.background = "#ff7e5f"}
-                  >
-                    Buy Now
-                  </a>
-                </div>
-              ))}
+                      <a
+                        href={getProductLink(item.toLowerCase())}
+                        target="_blank"
+                        style={buyButton}
+                      >
+                        Buy
+                      </a>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        )}
+          )}
       </div>
     </div>
   );
@@ -173,23 +169,20 @@ const buttonStyle = {
   border: "none",
   borderRadius: "10px",
   fontWeight: "bold",
-  cursor: "pointer",
 };
 
 const cardContainer = {
   display: "flex",
   justifyContent: "space-between",
-  gap: "10px",
   marginTop: "15px",
 };
 
 const cardStyle = {
-  background: "#fff",
-  padding: "12px",
-  borderRadius: "15px",
   width: "120px",
-  boxShadow: "0 10px 20px rgba(0,0,0,0.1)",
-  transition: "0.3s",
+  padding: "10px",
+  background: "#fff",
+  borderRadius: "12px",
+  boxShadow: "0 5px 15px rgba(0,0,0,0.1)",
 };
 
 const imageStyle = {
@@ -200,13 +193,11 @@ const imageStyle = {
 };
 
 const buyButton = {
-  display: "inline-block",
+  display: "block",
   marginTop: "8px",
-  padding: "8px 12px",
+  padding: "6px",
   background: "#ff7e5f",
   color: "white",
-  borderRadius: "10px",
-  fontSize: "12px",
+  borderRadius: "8px",
   textDecoration: "none",
-  transition: "0.3s",
 };
